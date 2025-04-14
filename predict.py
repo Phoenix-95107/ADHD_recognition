@@ -25,7 +25,7 @@ def predict_adhd(features_df):
         X_scaled = scaler.transform(features_df)
         
         # Make predictions
-        predictions = model.predict(X_scaled)
+        # predictions = model.predict(X_scaled)
         probabilities = model.predict_proba(X_scaled)
         print(probabilities)
         # Calculate average probability for ADHD

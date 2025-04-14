@@ -12,14 +12,11 @@ app = Flask(__name__)
 # Use system temp directory for uploads in production
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
-    app.config['SPLIT'] = tempfile.gettempdir()
     app.config['PROCESS'] = tempfile.gettempdir()
 else:
     app.config['UPLOAD_FOLDER'] = 'uploads'
-    app.config['SPLIT'] = 'split'
     app.config['PROCESS'] = 'process'
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    os.makedirs(app.config['SPLIT'], exist_ok=True)
     os.makedirs(app.config['PROCESS'], exist_ok=True)
 
 app.config['MAX_CONTENT_LENGTH'] = 1000 * 1024 * 1024  # 100MB max file size
@@ -82,26 +79,28 @@ def upload_file():
                             mimetype='text/event-stream')
 
         filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
+        input_filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        output_filepath = os.path.join(app.config['PROCESS'])
         # Check if file path is too long
-        if len(filepath) > app.config['MAX_CONTENT_PATH']:
+        if len(input_filepath) > app.config['MAX_CONTENT_PATH']:
             return Response(send_result({
                 'success': False,
                 'message': 'File path too long'
             }),
                             mimetype='text/event-stream')
 
-        file.save(filepath)
+        file.save(input_filepath)
 
         def generate():
             try:
                 estimate_time = 2 * (
-                    create_predict_data.split_number(filepath) - 1
-                ) if create_predict_data.split_number(filepath) >= 2 else 3
+                    create_predict_data.split_number(input_filepath) -
+                    1) if create_predict_data.split_number(
+                        input_filepath) >= 2 else 3
                 yield send_estimate_time(estimate_time)
                 # Process audio file
-                features_df = create_predict_data.process_audio_files(filepath)
+                features_df = create_predict_data.process_audio_files(
+                    input_filepath, output_filepath)
 
                 result = predict.predict_adhd(features_df)
                 print(result)
@@ -115,8 +114,8 @@ def upload_file():
                 })
             finally:
                 # Clean up
-                if os.path.exists(filepath):
-                    os.remove(filepath)
+                if os.path.exists(input_filepath):
+                    os.remove(input_filepath)
 
         return Response(generate(), mimetype='text/event-stream')
 
