@@ -12,9 +12,15 @@ app = Flask(__name__)
 # Use system temp directory for uploads in production
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
+    app.config['SPLIT'] = tempfile.gettempdir()
+    app.config['PROCESS'] = tempfile.gettempdir()
 else:
     app.config['UPLOAD_FOLDER'] = 'uploads'
+    app.config['SPLIT'] = 'split'
+    app.config['PROCESS'] = 'process'
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(app.config['SPLIT'], exist_ok=True)
+    os.makedirs(app.config['PROCESS'], exist_ok=True)
 
 app.config['MAX_CONTENT_LENGTH'] = 1000 * 1024 * 1024  # 100MB max file size
 app.config['MAX_CONTENT_PATH'] = 255  # Maximum length of file path
