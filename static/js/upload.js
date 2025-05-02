@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function startProgressAnimation(estimateTime) {
     console.log(estimateTime);
     let currentProgress = 0;
-    const targetProgress = 99; // We'll go up to 90% during processing
+    const targetProgress = 94; // We'll go up to 90% during processing
     const totalSteps = estimateTime * 100; // Convert seconds to steps
     const stepSize = targetProgress / totalSteps;
     const stepInterval = 10; // Update every 10ms
