@@ -1,4 +1,4 @@
-# ADHD Audio Analysis System
+# ADHD Recognition System with Personal Voice 
 
 A machine learning-based system for analyzing audio recordings to detect potential ADHD characteristics using advanced audio processing and machine learning techniques.
 
@@ -122,7 +122,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - scikit-learn for machine learning capabilities
 - Flask for web framework
 
-#ADHD
-#Pytorch
-#Python
-#eGeMAPs
+
+[Telegram](https://t.me/Minato_95)
